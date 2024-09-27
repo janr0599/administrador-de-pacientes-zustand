@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { DraftPatient, Patient } from "./types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,39 +20,46 @@ const createPatient = (data: DraftPatient): Patient => {
 };
 
 export const usePatientStore = create<PatientState>()(
-  devtools((set) => ({
-    patients: [],
-    activeID: "",
-
-    addPatient: (data) => {
-      const patient = createPatient(data);
-
-      set((state) => ({
-        patients: [...state.patients, patient],
-      }));
-    },
-
-    deletePatient: (id) => {
-      set((state) => ({
-        patients: state.patients.filter((patient) => patient.id !== id),
-      }));
-    },
-
-    getPatientById: (id) => {
-      set(() => ({
-        activeID: id,
-      }));
-    },
-
-    updatePatient: (data) => {
-      set((state) => ({
-        patients: state.patients.map((patient) =>
-          patient.id === state.activeID
-            ? { id: state.activeID, ...data }
-            : patient
-        ),
+  devtools(
+    persist(
+      (set) => ({
+        patients: [],
         activeID: "",
-      }));
-    },
-  }))
+
+        addPatient: (data) => {
+          const patient = createPatient(data);
+
+          set((state) => ({
+            patients: [...state.patients, patient],
+          }));
+        },
+
+        deletePatient: (id) => {
+          set((state) => ({
+            patients: state.patients.filter((patient) => patient.id !== id),
+          }));
+        },
+
+        getPatientById: (id) => {
+          set(() => ({
+            activeID: id,
+          }));
+        },
+
+        updatePatient: (data) => {
+          set((state) => ({
+            patients: state.patients.map((patient) =>
+              patient.id === state.activeID
+                ? { id: state.activeID, ...data }
+                : patient
+            ),
+            activeID: "",
+          }));
+        },
+      }),
+      {
+        name: "patient-storage",
+      }
+    )
+  )
 );
