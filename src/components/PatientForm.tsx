@@ -12,13 +12,18 @@ function PatientForm() {
     console.log("New patient");
   };
 
+  const removeWhiteSpaces = (value: String) => {
+    value.trim();
+  };
+
   return (
     <div className="md:w-1/2 lg:w-2/5 mx-5">
-      <h2 className="font-black text-3xl text-center">Seguimiento Pacientes</h2>
+      <h2 className="font-black text-3xl text-center">Patient Intake</h2>
 
       <p className="text-lg mt-5 text-center mb-10">
-        Añade Pacientes y {""}
-        <span className="text-indigo-600 font-bold">Administralos</span>
+        Add and {""}
+        <span className="text-indigo-600 font-bold">Manage {""}</span>
+        Your Patients
       </p>
 
       <form
@@ -28,31 +33,38 @@ function PatientForm() {
       >
         <div className="mb-5">
           <label htmlFor="name" className="text-sm uppercase font-bold">
-            Paciente
+            Patient
           </label>
           <input
             id="name"
             className="w-full p-3  border border-gray-100"
             type="text"
-            placeholder="Nombre del Paciente"
+            placeholder="Patient name"
             {...register("name", {
               required: "Patient name is required",
             })}
           />
 
-          {errors.name && <Error>{errors.name?.message as String}</Error>}
+          {errors.name && <Error>{errors.name.message as String}</Error>}
         </div>
 
         <div className="mb-5">
           <label htmlFor="caretaker" className="text-sm uppercase font-bold">
-            Propietario
+            Owner
           </label>
           <input
             id="caretaker"
             className="w-full p-3  border border-gray-100"
             type="text"
-            placeholder="Nombre del Propietario"
+            placeholder="Owner's name"
+            {...register("caretaker", {
+              required: "Owner's name is required",
+            })}
           />
+
+          {errors.caretaker && (
+            <Error>{errors.caretaker.message as String}</Error>
+          )}
         </div>
 
         <div className="mb-5">
@@ -63,36 +75,57 @@ function PatientForm() {
             id="email"
             className="w-full p-3  border border-gray-100"
             type="email"
-            placeholder="Email de Registro"
+            placeholder="Registered email"
+            {...register("email", {
+              required: "email is required",
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: "Please enter a valid email",
+              },
+            })}
           />
+          {errors.email && <Error>{errors.email.message as string}</Error>}
+          {errors.pattern && <Error>{errors.pattern.message as string}</Error>}
         </div>
 
         <div className="mb-5">
           <label htmlFor="date" className="text-sm uppercase font-bold">
-            Fecha Alta
+            Date created
           </label>
           <input
             id="date"
             className="w-full p-3  border border-gray-100"
             type="date"
+            {...register("date", {
+              required: "Registered date is required",
+            })}
           />
+
+          {errors.date && <Error>{errors.date.message as String}</Error>}
         </div>
 
         <div className="mb-5">
           <label htmlFor="symptoms" className="text-sm uppercase font-bold">
-            Síntomas
+            Symptoms
           </label>
           <textarea
             id="symptoms"
             className="w-full p-3  border border-gray-100"
-            placeholder="Síntomas del paciente"
-          ></textarea>
+            placeholder="What is the patient's condition"
+            {...register("symptoms", {
+              required: "Symptoms are required",
+            })}
+          />
+
+          {errors.symptoms && (
+            <Error>{errors.symptoms.message as String}</Error>
+          )}
         </div>
 
         <input
           type="submit"
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
-          value="Guardar Paciente"
+          value="Add Patient"
         />
       </form>
     </div>
