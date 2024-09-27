@@ -1,19 +1,19 @@
 import { useForm } from "react-hook-form";
 import Error from "./Error";
+import { DraftPatient } from "../types";
+import { usePatientStore } from "../store";
 
 function PatientForm() {
+  const { addPatient } = usePatientStore();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<DraftPatient>();
 
-  const registerPatient = () => {
-    console.log("New patient");
-  };
-
-  const removeWhiteSpaces = (value: String) => {
-    value.trim();
+  const registerPatient = (data: DraftPatient) => {
+    addPatient(data);
   };
 
   return (
@@ -45,26 +45,24 @@ function PatientForm() {
             })}
           />
 
-          {errors.name && <Error>{errors.name.message as String}</Error>}
+          {errors.name && <Error>{errors.name.message}</Error>}
         </div>
 
         <div className="mb-5">
-          <label htmlFor="caretaker" className="text-sm uppercase font-bold">
+          <label htmlFor="owner" className="text-sm uppercase font-bold">
             Owner
           </label>
           <input
-            id="caretaker"
+            id="owner"
             className="w-full p-3  border border-gray-100"
             type="text"
             placeholder="Owner's name"
-            {...register("caretaker", {
+            {...register("owner", {
               required: "Owner's name is required",
             })}
           />
 
-          {errors.caretaker && (
-            <Error>{errors.caretaker.message as String}</Error>
-          )}
+          {errors.owner && <Error>{errors.owner.message}</Error>}
         </div>
 
         <div className="mb-5">
@@ -84,8 +82,7 @@ function PatientForm() {
               },
             })}
           />
-          {errors.email && <Error>{errors.email.message as string}</Error>}
-          {errors.pattern && <Error>{errors.pattern.message as string}</Error>}
+          {errors.email && <Error>{errors.email.message}</Error>}
         </div>
 
         <div className="mb-5">
@@ -97,11 +94,11 @@ function PatientForm() {
             className="w-full p-3  border border-gray-100"
             type="date"
             {...register("date", {
-              required: "Registered date is required",
+              required: "Date created is required",
             })}
           />
 
-          {errors.date && <Error>{errors.date.message as String}</Error>}
+          {errors.date && <Error>{errors.date.message}</Error>}
         </div>
 
         <div className="mb-5">
@@ -117,9 +114,7 @@ function PatientForm() {
             })}
           />
 
-          {errors.symptoms && (
-            <Error>{errors.symptoms.message as String}</Error>
-          )}
+          {errors.symptoms && <Error>{errors.symptoms.message}</Error>}
         </div>
 
         <input
