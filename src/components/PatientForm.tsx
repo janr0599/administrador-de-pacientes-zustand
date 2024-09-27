@@ -2,18 +2,29 @@ import { useForm } from "react-hook-form";
 import Error from "./Error";
 import { DraftPatient } from "../types";
 import { usePatientStore } from "../store";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function PatientForm() {
   const { addPatient } = usePatientStore();
+
+  const notify = () =>
+    toast.success("Patient added successfully!", {
+      autoClose: 3000,
+    });
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<DraftPatient>();
 
   const registerPatient = (data: DraftPatient) => {
     addPatient(data);
+
+    reset();
+    notify();
   };
 
   return (
@@ -119,10 +130,12 @@ function PatientForm() {
 
         <input
           type="submit"
-          className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
+          className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors rounded-lg"
           value="Add Patient"
         />
       </form>
+
+      <ToastContainer />
     </div>
   );
 }
