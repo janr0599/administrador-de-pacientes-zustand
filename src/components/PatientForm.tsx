@@ -1,30 +1,49 @@
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import Error from "./Error";
 import { DraftPatient } from "../types";
 import { usePatientStore } from "../store";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 
 function PatientForm() {
-  const { addPatient } = usePatientStore();
-
-  const notify = () =>
-    toast.success("Patient added successfully!", {
-      autoClose: 3000,
-    });
+  const { addPatient, activeID, patients, updatePatient } = usePatientStore();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<DraftPatient>();
 
+  useEffect(() => {
+    if (activeID) {
+      const activePatient = patients.filter(
+        (patient) => patient.id === activeID
+      )[0];
+
+      setValue("name", activePatient.name);
+      setValue("owner", activePatient.owner);
+      setValue("email", activePatient.email);
+      setValue("date", activePatient.date);
+      setValue("symptoms", activePatient.symptoms);
+    }
+  }, [activeID]);
+
   const registerPatient = (data: DraftPatient) => {
-    addPatient(data);
+    if (activeID) {
+      updatePatient(data);
+      toast.success("Patient updated successfully!", {
+        autoClose: 3000,
+      });
+    } else {
+      addPatient(data);
+      toast.success("Patient added successfully!", {
+        autoClose: 3000,
+      });
+    }
 
     reset();
-    notify();
   };
 
   return (
@@ -131,11 +150,9 @@ function PatientForm() {
         <input
           type="submit"
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors rounded-lg"
-          value="Add Patient"
+          value={activeID ? "Update patient" : "add patient"}
         />
       </form>
-
-      <ToastContainer />
     </div>
   );
 }
